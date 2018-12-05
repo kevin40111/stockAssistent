@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+honcho = "*"
+
+[packages]
+flask = "*"
+beautifulsoup4 = "*"
+apscheduler = "*"
+dominate = "*"
+request = "*"
+requests = "*"
+line-bot-sdk = "*"
+gunicorn = "*"
+
+[requires]
+python_version = "3.6"
