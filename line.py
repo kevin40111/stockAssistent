@@ -1,11 +1,8 @@
 from flask import Flask, request, abort
-from dominate import document
-from dominate.tags import *
-from dominate.util import raw
 import os
+import sys
+sys.path.append('./src')
 
-from bs4 import BeautifulSoup
-import requests
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -42,36 +39,21 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 
 def handle_message(event):
-    message = search_news(event.message.text)
+    map = {
+        '災害': 'disaster',
+        '預防': 'prevention',
+        '檢測': 'detection',
+        '交通': 'traffic',
+        '歷史資料': 'history',
+    }
+
+    split = event.message.text.split(':')
+    module = __import__(map[split[0]])
+
+    message = module.reply(split[1])
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=message))
-
-def search_news(request):
-    parameter = request.split(',')
-    website = 'http://news.ltn.com.tw'
-    resp = requests.get(
-        website + '/search',
-        params={
-            'keyword': parameter[0],
-            'page': parameter[1] if len(parameter) > 1 else 1
-        },
-    )
-    resp.encoding = 'UTF-8'
-    html_doc = resp.text
-    soup = BeautifulSoup(html_doc, 'html.parser')
-    news = soup.select_one('#newslistul').select('li')
-
-    message =''
-    for n in news:
-       txt = n.select_one('.tit').select_one('p').string
-       if txt:
-            message += 'title:' + txt + '<br>'
-            message += 'tag:' + n.select_one('.immtag').string + '<br>'
-            url = website + '/' + n.select_one('a.tit').get('href')
-            message += 'link:' + str(a(url, href=url)) + '<br>'
-            message += '<br><br>'
-    return message
 
 if __name__ == "__main__":
     app.run()

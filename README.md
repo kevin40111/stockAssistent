@@ -22,6 +22,27 @@ honcho start -f Procfile.dev
 line-simulator
 ```
 - - - -
+
+# ##撰寫方式##
+### 需求
+實作各檔案 reply 的方法，編寫要回傳的訊息，回傳資料型態為字串．
+
+### 對應
+目前已將關鍵字對應的檔案添加進map中
+```
+map = {
+        '災害': 'disaster',
+        '預防': 'prevention',
+        '檢測': 'detection',
+        '交通': 'traffic',
+        '歷史資料': 'history',
+    }
+```
+
+### 測試
+在模擬器中輸入  歷史:  <parameter> ， 目前使用 : 符號來決定功能模組．
+- - - -
+
 # **上傳檔案**
 ### 建立分支
 ```
