@@ -1,6 +1,10 @@
 # **環境建置**
 [開發需求工具](https://hackmd.io/s/rJLWLWx_Q#Install-pip)
 
+# **Line message**
+[linbot-messate-object](https://github.com/line/line-bot-sdk-python#user-content-message-objects)
+[message data struct](https://ithelp.ithome.com.tw/articles/10198142)
+
 ### Step1 複製程式碼
 ```
 ##終端機打開進入到你想放程式的目錄##
