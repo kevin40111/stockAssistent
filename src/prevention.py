@@ -1,2 +1,6 @@
+from linebot.models import (
+    TextSendMessage
+)
+
 def reply(request):
-    return request
+    return TextSendMessage(text=request)

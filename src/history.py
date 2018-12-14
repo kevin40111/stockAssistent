@@ -5,6 +5,10 @@ from dominate.util import raw
 from bs4 import BeautifulSoup
 import requests
 
+from linebot.models import (
+    TextSendMessage
+)
+
 def search_news(request):
     method = request.split(':')[0]
     parameter = request.split(',')
@@ -33,4 +37,4 @@ def search_news(request):
     return message
 
 def reply(request):
-    return request
+    return TextSendMessage(text=request)

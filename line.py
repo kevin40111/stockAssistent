@@ -51,13 +51,14 @@ def handle_message(event):
         spelate = ':' if event.message.text.find(':') != -1 else '：'
         split = event.message.text.split(spelate)
         module = __import__(map[split[0]])
-        message = module.reply(split[1])
+        messageOBJ = module.reply(split[1])
     except:
-        message = "請輸入符合規則的參數結構[ex 交通：火車]"
+        messageOBJ = TextSendMessage(text="請輸入符合規則的參數結構[ex 交通：火車]")
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=message))
+        messageOBJ
+    )
 
 if __name__ == "__main__":
     app.run()
