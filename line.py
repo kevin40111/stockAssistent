@@ -51,14 +51,20 @@ def handle_message(event):
         spelate = ':' if event.message.text.find(':') != -1 else '：'
         split = event.message.text.split(spelate)
         module = __import__(map[split[0]])
-        messageOBJ = module.reply(split[1])
-    except:
-        messageOBJ = TextSendMessage(text="請輸入符合規則的參數結構[ex 交通：火車]")
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        messageOBJ
-    )
+        messageOBJ_array = []
+        messageOBJ_array += module.reply(split[1])
+
+        for messageOBJ in messageOBJ_array:
+            line_bot_api.reply_message(
+                event.reply_token,
+                messageOBJ
+            )
+    except:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="請輸入符合規則的參數結構[ex 交通：火車]")
+        )
 
 if __name__ == "__main__":
     app.run()
