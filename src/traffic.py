@@ -10,14 +10,12 @@ from linebot.models import (
 def textMessageTemplate(message):
     txt = ''
     for (key, value) in message.items():
-        print(value)
         if key == 'text':
             txt += value
         if key == 'link':
-            txt += str(a(value, href=value))
-        txt += '<br>'
+            txt += value
 
-    return txt + '<br>'
+    return txt
 
 
 def trainInfo():
@@ -41,18 +39,16 @@ def trainInfo():
 
     return message
 
-
-def transportation(request):
-    parameter = request.split(',')
-
-
 def reply(request):
 
     messages = transport['火車']['info']()
 
     result = []
+    count = 0
     for message in messages:
+        if count >= 5: break
         result.append( TextSendMessage(text=textMessageTemplate(message)) )
+        count += 1
 
     return result
 

@@ -52,19 +52,16 @@ def handle_message(event):
         split = event.message.text.split(spelate)
         module = __import__(map[split[0]])
 
-        messageOBJ_array = []
-        messageOBJ_array += module.reply(split[1])
+        #回傳一個message的物件集合 size between 1 and 5
+        messageOBJ_array = module.reply(split[1])
 
-        for messageOBJ in messageOBJ_array:
-            line_bot_api.reply_message(
-                event.reply_token,
-                messageOBJ
-            )
     except:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="請輸入符合規則的參數結構[ex 交通：火車]")
-        )
+        messageOBJ_array = TextSendMessage(text='請輸入符合的參數結構 ex 交通:火車')
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        messageOBJ_array
+    )
 
 if __name__ == "__main__":
     app.run()
