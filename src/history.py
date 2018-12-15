@@ -6,11 +6,10 @@ from bs4 import BeautifulSoup
 import requests
 
 from linebot.models import (
-    TextSendMessage
+    TextSendMessage, ImageSendMessage, ImagemapSendMessage, URIImagemapAction, ImagemapArea, MessageImagemapAction, BaseSize
 )
 
 def search_news(request):
-    method = request.split(':')[0]
     parameter = request.split(',')
     website = 'http://news.ltn.com.tw'
     resp = requests.get(
@@ -37,4 +36,22 @@ def search_news(request):
     return message
 
 def reply(request):
-    return TextSendMessage(text=request)
+    return ImagemapSendMessage(
+        base_url='https://example.com/base',
+        alt_text='this is an imagemap',
+        base_size=BaseSize(height=1040, width=1040),
+        actions=[
+            URIImagemapAction(
+                link_uri='https://example.com/',
+                area=ImagemapArea(
+                    x=0, y=0, width=520, height=1040
+                )
+            ),
+            MessageImagemapAction(
+                text='hello',
+                area=ImagemapArea(
+                    x=520, y=0, width=520, height=1040
+                )
+            )
+        ]
+    )

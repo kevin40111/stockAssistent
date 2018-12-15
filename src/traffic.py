@@ -50,11 +50,11 @@ def reply(request):
 
     messages = transport['火車']['info']()
 
-    result = ''
+    result = []
     for message in messages:
-        result += textMessageTemplate(message)
+        result.append( TextSendMessage(text=textMessageTemplate(message)) )
 
-    return TextSendMessage(text=result)
+    return result
 
 transport = {
         '火車': {
