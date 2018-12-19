@@ -18,6 +18,48 @@ def textMessageTemplate(message):
     return txt
 
 
+def mrtInfo():
+    resp = requests.get(
+        transport['捷運']['website'],
+        headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
+    )
+
+    resp.encoding = 'UTF-8'
+    soup = BeautifulSoup(resp.text, 'html.parser')
+
+    tags = soup.select('td.CCMS_jGridView_td_Class_1')
+    message = []
+    for tag in tags:
+        try:
+            message.append({
+                'text': tag.select_one('span a')['title'],
+                'link': 'https://www.metro.taipei/' + tag.select_one('span a')['href']
+            })
+        except:
+            print('error')
+
+    return message
+
+def hightTranInfo():
+    resp = requests.get(
+        transport['高鐵']['website'],
+        params={},
+        headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
+    )
+    tags = resp.json()
+
+    message = []
+    for tag in tags['NewsNewData']:
+        try:
+            message.append({
+                'text': tag['Title'],
+                'link': 'http://m.thsrc.com.tw/tw/News/Detail/' + tag['NewsId']
+            })
+        except:
+            print('error')
+
+    return message
+
 def trainInfo():
     resp = requests.get(
         transport['火車']['website'],
@@ -39,31 +81,31 @@ def trainInfo():
 
     return message
 
+transport = {
+    '火車': {
+        'website': 'https://www.railway.gov.tw/tw/news.aspx?n=21560',
+        'info': trainInfo
+    },
+    '高鐵': {
+        'website': 'http://m.thsrc.com.tw/tw/News/LoadMoreNews?skip=0&loadCount=5',
+        'info': hightTranInfo
+    },
+    '捷運': {
+        'website': 'https://www.metro.taipei/News.aspx?n=30CCEFD2A45592BF&sms=72544237BBE4C5F6',
+        'info': mrtInfo
+    },
+}
+
 def reply(request):
-
-    messages = transport['火車']['info']()
-
+    messages = transport[request]['info']()
     result = []
     count = 0
     for message in messages:
-        if count >= 5: break
-        result.append( TextSendMessage(text=textMessageTemplate(message)) )
+        if count >= 5:
+            break
+        result.append(TextSendMessage(text=textMessageTemplate(message)))
         count += 1
 
     return result
 
-transport = {
-        '火車': {
-            'website': 'https://www.railway.gov.tw/tw/news.aspx?n=21560',
-            'info': trainInfo
-        },
-        '公車': {
-            'website': ''
-        },
-        '高鐵': {
-            'website': ''
-        },
-        '捷運': {
-            'website': ''
-        },
-}
+reply('捷運')

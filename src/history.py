@@ -10,6 +10,7 @@ from linebot.models import (
 )
 
 def search_news(request):
+    method = request.split(':')[0]
     parameter = request.split(',')
     website = 'http://news.ltn.com.tw'
     resp = requests.get(

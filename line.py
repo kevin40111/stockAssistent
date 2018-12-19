@@ -13,6 +13,16 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
+import psycopg2
+
+try:
+    conn = psycopg2.connect(
+        dbname="group5pg", user="postgres", host="hci.dianalab.net", password="c8eccf33282708be620bb689dd54c2e8", port="10715"
+    )
+    print("I am connect to the database")
+except:
+    print("I am unable to connect to the database")
+
 app = Flask(__name__)
 
 line_bot_api = None
@@ -45,7 +55,19 @@ def handle_message(event):
         '檢測': 'detection',
         '交通': 'traffic',
         '歷史資料': 'history',
+        '使用者': 'users',
+        '推播': 'notifaction'
     }
+
+    try:
+        cur = conn.cursor()
+        query = "insert into users values ('{}');".format(event.source.user_id)
+        cur.execute(query)
+        conn.commit()
+        print('-------insert user-------')
+    except Exception:
+        print(Exception)
+        print('-------insert fail-------')
 
     try:
         spelate = ':' if event.message.text.find(':') != -1 else '：'
