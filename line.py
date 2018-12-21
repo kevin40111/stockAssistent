@@ -15,14 +15,6 @@ from linebot.models import (
 
 import psycopg2
 
-try:
-    conn = psycopg2.connect(
-        dbname="group5pg", user="postgres", host="hci.dianalab.net", password="c8eccf33282708be620bb689dd54c2e8", port="10715"
-    )
-    print("I am connect to the database")
-except:
-    print("I am unable to connect to the database")
-
 app = Flask(__name__)
 
 line_bot_api = None
@@ -60,6 +52,9 @@ def handle_message(event):
     }
 
     try:
+        conn = psycopg2.connect(
+            dbname="group5pg", user="postgres", host="hci.dianalab.net", password="c8eccf33282708be620bb689dd54c2e8", port="10715"
+        )
         cur = conn.cursor()
         query = "insert into users values ('{}');".format(event.source.user_id)
         cur.execute(query)
