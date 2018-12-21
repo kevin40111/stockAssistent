@@ -1,4 +1,5 @@
 from linebot.models import (TextSendMessage)
+from linebot.models import (TemplateSendMessage)
 from linebot.models import actions, imagemap, template
 
 import requests
@@ -29,6 +30,7 @@ def reply(request):
         '電力': lambda: createDIYList('電力'),
         '瓦斯': lambda: createDIYList('瓦斯'),
     }
+
     result = funs.get(request, lambda:TextSendMessage(text=request))()
     return result
 
@@ -55,18 +57,16 @@ def createImagemap():
     return imagemap_message
 
 def createTemplateButtons():
-    buttons_template_message = template.TemplateSendMessage(
+    buttons_template_message = TemplateSendMessage(
         alt_text='Buttons template',
         template=template.ButtonsTemplate(
             thumbnail_image_url='https://i.imgur.com/PEh153q.png',
-            # image_aspect_ratio='square',
-            # image_size='contain',
             title='News!',
             text='Please select',
             actions=[
                 actions.PostbackAction(
                     label='自來水新聞',
-                    text='檢測:自來水新聞'
+                    data='檢測:自來水新聞'
                 ),
                 actions.MessageAction(
                     label='電力新聞',
@@ -79,11 +79,12 @@ def createTemplateButtons():
             ]
         )
     )
+
     return buttons_template_message
 
 def createNews(newsType):
     resp = requests.get(
-        'https://www.google.com/search', 
+        'https://www.google.com/search',
         params={ 'q': newsType, 'tbm': 'nws', 'start':'0'},
         headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'}
     )
@@ -92,7 +93,7 @@ def createNews(newsType):
 
     soup = BeautifulSoup(html_doc, 'html.parser')
     news = soup.select('.ts')
-    
+
     ImgSoruce = {
         '自來水':   'https://i.imgur.com/KxbkZz6.png',
         '電力'  :   'https://i.imgur.com/YTuT4j6.jpg',
@@ -134,7 +135,7 @@ def createHomeDetection():
             actions=[
                 actions.PostbackAction(
                     label='自來水',
-                    text='檢測:自來水'
+                    data='檢測:自來水'
                 ),
                 actions.MessageAction(
                     label='電力',
@@ -155,7 +156,7 @@ def createDIYList(DIYType):
         '電力'   : ElectricityDIYList,
         '瓦斯'   : GasDIYList
     }[DIYType]
-    
+
     DIYColums = []
     for n in DIYList:
         col = template.CarouselColumn(
