@@ -14,7 +14,7 @@ from linebot.models import (
 )
 from datetime import datetime
 
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import psycopg2
 
@@ -29,6 +29,15 @@ else:
 
 handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
 
+def push():
+    api = LineBotApi(os.environ.get('CHANNEL_ACCESS_TOKEN'))
+    module = __import__('push')
+    message = module.pushMessage()
+    if(message):
+        pushList = module.pushList()
+        for to in pushList:
+            api.push_message(to[0], message)
+
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -39,7 +48,6 @@ def callback():
         abort(400)
 
     return 'OK'
-
 
 @handler.add(MessageEvent, message=TextMessage)
 
@@ -87,9 +95,7 @@ def handle_message(event):
 if __name__ == "__main__":
     app.run()
 
-module = __import__('push')
 
-sched = BlockingScheduler()
-sched.add_job(module.pushList, 'interval', seconds=10)
-
+sched = BackgroundScheduler()
+sched.add_job(push, 'interval', seconds=60)
 sched.start()
