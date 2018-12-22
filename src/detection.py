@@ -36,20 +36,20 @@ def reply(request):
 
 def createImagemap():
     imagemap_message = imagemap.ImagemapSendMessage(
-        base_url='https://i.imgur.com/piJcKim.png',
+        base_url='https://i.imgur.com/k29slfc.png',
         alt_text='this is an imagemap',
-        base_size=imagemap.BaseSize(height=391, width=500),
+        base_size=imagemap.BaseSize(height=813, width=1040),
         actions=[
             imagemap.MessageImagemapAction(
                 text='檢測:居家',
                 area=imagemap.ImagemapArea(
-                    x=0, y=91, width=250, height=391
+                    x=0, y=189, width=520, height=813
                 )
             ),
             imagemap.MessageImagemapAction(
                 text='檢測:大眾',
                 area=imagemap.ImagemapArea(
-                    x=250, y=91, width=250, height=391
+                    x=520, y=189, width=520, height=813
                 )
             )
         ]
@@ -118,7 +118,8 @@ def createNews(newsType):
     carousel_template_message = template.TemplateSendMessage(
         alt_text='Carousel template',
         template=template.CarouselTemplate(
-            columns=newsColums
+            columns=newsColums,
+            image_size='contain'
         )
     )
     return carousel_template_message
@@ -129,7 +130,7 @@ def createHomeDetection():
         template=template.ButtonsTemplate(
             thumbnail_image_url='https://i.imgur.com/dh9Oosl.png',
             # image_aspect_ratio='square',
-            # image_size='contain',
+            image_size='contain',
             title='檢測DIY!',
             text='Please select',
             actions=[
