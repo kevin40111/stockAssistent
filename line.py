@@ -12,6 +12,8 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
+from datetime import datetime
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 import psycopg2
 
@@ -83,3 +85,10 @@ def handle_message(event):
 
 if __name__ == "__main__":
     app.run()
+
+module = __import__('ServerPush')
+
+sched = BlockingScheduler()
+sched.add_job(module.SearchQuakeList, 'interval', seconds=60)
+
+sched.start()
