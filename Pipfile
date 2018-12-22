@@ -9,7 +9,6 @@ honcho = "*"
 [packages]
 flask = "*"
 beautifulsoup4 = "*"
-apscheduler = "*"
 dominate = "*"
 request = "*"
 requests = "*"
@@ -17,6 +16,7 @@ line-bot-sdk = "*"
 gunicorn = "*"
 psycopg2 = "*"
 psycopg2-binary = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.6"
