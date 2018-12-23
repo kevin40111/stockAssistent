@@ -12,9 +12,6 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
-from datetime import datetime
-
-from apscheduler.schedulers.background import BackgroundScheduler
 
 import psycopg2
 
@@ -29,14 +26,7 @@ else:
 
 handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
 
-def push():
-    api = LineBotApi(os.environ.get('CHANNEL_ACCESS_TOKEN'))
-    module = __import__('push')
-    message = module.pushMessage()
-    if(message):
-        pushList = module.pushList()
-        for to in pushList:
-            api.push_message(to[0], message)
+__import__('push').start()
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -77,10 +67,13 @@ def handle_message(event):
     try:
         spelate = ':' if event.message.text.find(':') != -1 else '：'
         split = event.message.text.split(spelate)
+        position = event.message.text.find(spelate)
+
+        request = event.message.text[position+1:]
         module = __import__(map[split[0]])
 
         #回傳一個message的物件集合 size between 1 and 5
-        messageOBJ_array = module.reply(split[1])
+        messageOBJ_array = module.reply(request)
 
     except:
         messageOBJ_array = TextSendMessage(text='請輸入符合的參數結構 ex 交通:火車')
@@ -92,8 +85,3 @@ def handle_message(event):
 
 if __name__ == "__main__":
     app.run()
-
-
-sched = BackgroundScheduler()
-sched.add_job(push, 'interval', seconds=60)
-sched.start()

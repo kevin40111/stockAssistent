@@ -1,10 +1,13 @@
 from linebot.models import TextSendMessage
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-
+from linebot import (
+    LineBotApi
+)
 import os
 import requests
 import psycopg2
+from apscheduler.schedulers.background import BackgroundScheduler
 
 def pushMessage():
     resp = requests.get(
@@ -27,9 +30,9 @@ def pushMessage():
 
     realQuaketime = datetime(int(dates[0]), int(dates[1]), int(dates[2]), int(times[0]), int(times[1]))
 
-    print(datetime.now())
+    print(datetime.now() + timedelta(hours=8))
     message = False
-    if(realQuaketime >= (datetime.now() - timedelta(minutes=3))):
+    if(realQuaketime >= (datetime.now() - timedelta(minutes=3) + timedelta(hours=8))):
         try:
             message = TextSendMessage(
                 text='地震消息：' +
@@ -66,3 +69,15 @@ def pushList():
         print(Exception)
 
     return rows
+
+def process():
+    api = LineBotApi(os.environ.get('CHANNEL_ACCESS_TOKEN'))
+    message = pushMessage()
+    if(message):
+        for to in pushList():
+            api.push_message(to[0], message)
+
+def start():
+    sched = BackgroundScheduler()
+    sched.add_job(process, 'interval', seconds=60)
+    sched.start()

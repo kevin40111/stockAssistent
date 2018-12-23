@@ -104,7 +104,7 @@ def menu():
         )
     )
 
-    return buttons_template_message
+    return [buttons_template_message]
 
 transport = {
     '火車': {
@@ -131,9 +131,9 @@ transport = {
 def reply(request):
     messages = transport[request]['info']()
     result = []
-    count = 0
 
     if(transport[request]['return'] == 'text'):
+        count = 0
         for message in messages:
             if count >= 5:
                 break
@@ -141,6 +141,7 @@ def reply(request):
             count += 1
 
     if(transport[request]['return'] == 'template'):
-        result.append(messages)
+        for message in messages:
+            result.append(message)
 
     return result
