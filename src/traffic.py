@@ -1,7 +1,5 @@
-from dominate import document
-from dominate.tags import *
-from dominate.util import raw
 from bs4 import BeautifulSoup
+from linebot.models import actions, imagemap, template, TemplateSendMessage
 import requests
 from linebot.models import (
     TextSendMessage
@@ -81,18 +79,52 @@ def trainInfo():
 
     return message
 
+def menu():
+    buttons_template_message = TemplateSendMessage(
+        alt_text='Buttons template',
+        template=template.ButtonsTemplate(
+            image_size='contain',
+            thumbnail_image_url='https://www.motc.gov.tw/ch/images/logo.png',
+            title='Traffic Information!',
+            text='Please select Transportation',
+            actions=[
+                actions.MessageAction(
+                    label='火車資訊',
+                    text='交通:火車'
+                ),
+                actions.MessageAction(
+                    label='高鐵資訊',
+                    text='交通:高鐵'
+                ),
+                actions.MessageAction(
+                    label='捷運資訊',
+                    text='交通:捷運'
+                )
+            ]
+        )
+    )
+
+    return buttons_template_message
+
 transport = {
     '火車': {
         'website': 'https://www.railway.gov.tw/tw/news.aspx?n=21560',
-        'info': trainInfo
+        'info': trainInfo,
+        'return':'text'
     },
     '高鐵': {
         'website': 'http://m.thsrc.com.tw/tw/News/LoadMoreNews?skip=0&loadCount=5',
-        'info': hightTranInfo
+        'info': hightTranInfo,
+        'return': 'text'
     },
     '捷運': {
         'website': 'https://www.metro.taipei/News.aspx?n=30CCEFD2A45592BF&sms=72544237BBE4C5F6',
-        'info': mrtInfo
+        'info': mrtInfo,
+        'return': 'text'
+    },
+    '資訊': {
+        'info': menu,
+        'return': 'template'
     },
 }
 
@@ -100,12 +132,15 @@ def reply(request):
     messages = transport[request]['info']()
     result = []
     count = 0
-    for message in messages:
-        if count >= 5:
-            break
-        result.append(TextSendMessage(text=textMessageTemplate(message)))
-        count += 1
+
+    if(transport[request]['return'] == 'text'):
+        for message in messages:
+            if count >= 5:
+                break
+            result.append(TextSendMessage(text=textMessageTemplate(message)))
+            count += 1
+
+    if(transport[request]['return'] == 'template'):
+        result.append(messages)
 
     return result
-
-reply('捷運')
