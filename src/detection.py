@@ -60,13 +60,14 @@ def createTemplateButtons():
     buttons_template_message = TemplateSendMessage(
         alt_text='Buttons template',
         template=template.ButtonsTemplate(
+            image_size='contain',
             thumbnail_image_url='https://i.imgur.com/PEh153q.png',
             title='News!',
             text='Please select',
             actions=[
-                actions.PostbackAction(
+                actions.MessageAction(
                     label='自來水新聞',
-                    data='檢測:自來水新聞'
+                    text='檢測:自來水新聞'
                 ),
                 actions.MessageAction(
                     label='電力新聞',
@@ -134,9 +135,9 @@ def createHomeDetection():
             title='檢測DIY!',
             text='Please select',
             actions=[
-                actions.PostbackAction(
+                actions.MessageAction(
                     label='自來水',
-                    data='檢測:自來水'
+                    text='檢測:自來水'
                 ),
                 actions.MessageAction(
                     label='電力',
@@ -161,7 +162,7 @@ def createDIYList(DIYType):
     DIYColums = []
     for n in DIYList:
         col = template.CarouselColumn(
-                # thumbnail_image_url=ImgSoruce,
+                thumbnail_image_url='https://i.imgur.com/2IzuDCM.jpg',
                 title=n['title'],
                 text=DIYType,
                 actions=[
@@ -176,6 +177,7 @@ def createDIYList(DIYType):
     carousel_template_message = template.TemplateSendMessage(
         alt_text='Carousel template',
         template=template.CarouselTemplate(
+            image_size='contain',
             columns=DIYColums
         )
     )

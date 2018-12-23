@@ -27,6 +27,7 @@ def pushMessage():
 
     realQuaketime = datetime(int(dates[0]), int(dates[1]), int(dates[2]), int(times[0]), int(times[1]))
 
+    print(datetime.now())
     message = False
     if(realQuaketime >= (datetime.now() - timedelta(minutes=3))):
         try:
@@ -60,7 +61,7 @@ def pushList():
         cur.execute(query)
         conn.commit()
         rows = cur.fetchall()
-
+        conn.close()
     except Exception:
         print(Exception)
 

@@ -59,7 +59,7 @@ def handle_message(event):
         '交通': 'traffic',
         '歷史資料': 'history',
         '使用者': 'users',
-        '推播': 'notifaction'
+        '推播': 'broadcast'
     }
 
     try:
@@ -70,10 +70,9 @@ def handle_message(event):
         query = "insert into users values ('{}');".format(event.source.user_id)
         cur.execute(query)
         conn.commit()
-        print('-------insert user-------')
+        conn.close()
     except Exception:
         print(Exception)
-        print('-------insert fail-------')
 
     try:
         spelate = ':' if event.message.text.find(':') != -1 else '：'
@@ -86,7 +85,6 @@ def handle_message(event):
     except:
         messageOBJ_array = TextSendMessage(text='請輸入符合的參數結構 ex 交通:火車')
 
-    print(messageOBJ_array)
     line_bot_api.reply_message(
         event.reply_token,
         messageOBJ_array
