@@ -9,7 +9,10 @@ import requests
 import psycopg2
 from apscheduler.schedulers.background import BackgroundScheduler
 
+last_post_time = datetime.now()
+
 def pushMessage():
+    global last_post_time
     resp = requests.get(
         'https://scweb.cwb.gov.tw/EarthquakeAdv.aspx',
         params={'ItemId': '57', 'loc': 'tw'},
@@ -30,9 +33,10 @@ def pushMessage():
 
     realQuaketime = datetime(int(dates[0]), int(dates[1]), int(dates[2]), int(times[0]), int(times[1]))
 
-    print(datetime.now() + timedelta(hours=8))
+    print(last_post_time)
     message = False
-    if(realQuaketime >= (datetime.now() - timedelta(minutes=3) + timedelta(hours=8))):
+    if(realQuaketime > last_post_time):
+        last_post_time = realQuaketime
         try:
             message = TextSendMessage(
                 text='地震消息：' +
